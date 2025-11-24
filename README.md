@@ -6,14 +6,15 @@
 ## Estructura del Proyecto
 
 ```
-Analisis-Fractura-Roca/
-├── src/                          # Código fuente principal
-├── data/                        # Gestión de datos
-│   ├── raw/                     # Datos originales
-│   ├── processed/               # Datos procesados
-│   └── sample-images/           # Muestra inicial de imágenes
-├── report/                      # Reporte de resultados
-├── scripts/                     # Scripts de utilidad
+Proyecto-CdD/
+│
+├───data            # gestin de los datos
+│   ├───cleaned     # datos preprocesados
+│   └───raw         # datos originales
+│
+├───reports         # reporte de resultados y presentación
+│   └───figures
+└───src             # Código fuente principal
 ```
 
 ## Instalación y Configuración
