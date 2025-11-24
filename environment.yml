@@ -1,0 +1,21 @@
+name: data-science
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.9
+  - numpy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scipy
+  - scikit-learn
+  - pip
+  - pytorch
+  - keras
+  - opencv
+  - pip:
+    - opencv-python
+    - tensorflow==2.12.0
+    - ucimlrepo
