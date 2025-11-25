@@ -1,7 +1,10 @@
-# Análisis de Fracturas en Rocas - Guanajuato Capital
+# Clasificación de Riesgo Cardiovascular
+
+---
 
 ## Descripción del Proyecto
 
+---
 
 ## Estructura del Proyecto
 
@@ -16,6 +19,8 @@ Proyecto-CdD/
 │   └───figures/
 └───src/            # Código fuente principal
 ```
+
+---
 
 ## Instalación y Configuración
 
@@ -37,7 +42,7 @@ conda activate data-science
 
 #### Dependencias secundarias
 
-
+---
 
 ## Uso del Proyecto
 
@@ -51,10 +56,13 @@ python -m src.<file-name>
 - 
 - Controlar rutas desde un sólo archivo
 
+---
 
 ## Estructura de Datos
 
 ### Formato de Entrada
+
+---
 
 ## Desarrollo
 
@@ -71,6 +79,8 @@ nuevo_modulo/
 └── helpers.py
 ```
 
+---
+
 ## Contribución
 
 1. Fork del proyecto
@@ -78,6 +88,8 @@ nuevo_modulo/
 3. Commit cambios (`git commit -am 'Agregar nueva característica'`)
 4. Push a la rama (`git push origin feature/nueva-caracteristica`)
 5. Crear Pull Request
+
+---
 
 ## Mantenimiento
 
@@ -89,14 +101,14 @@ conda env update -f environment.yml --prune
 ### Compilar Reporte
 ```bash
 # Generar reportes
-cd reports/
-pdflatex main.tex
+cd report/
+pdflatex report.tex
 ```
 
 ## Contacto
 
 - **Autor**: Hazel Shamed
-- **Repositorio**: [github.com/HazelS002/Analisis-Fractura-Roca](https://github.com/HazelS002/Analisis-Fractura-Roca)
+- **Repositorio**: [github.com/HazelS002/Proyecto-CdD](https://github.com/HazelS002/Proyecto-CdD)
 - **Institución**: Universidad de Guanajuato
 
 ---

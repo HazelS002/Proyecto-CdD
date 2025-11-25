@@ -1,15 +1,14 @@
 import pandas as pd
-from src.load_data import read_heart_disease
 from src.visualitation import plot_boxs, plot_nans
-from src import RAW_DATA_PATH
 from sklearn.preprocessing import StandardScaler
 
-def eda():
-    X, y = read_heart_disease(RAW_DATA_PATH) # leer los datos guardados
-    print(80 * "=")
-    
-    
-    print(X.head()) # mostrar las primeras filas
+def eda(X, y) -> None:
+    """ Análisis exploratorio de datos (EDA)
+    Args:
+        X (pd.DataFrame): características
+        y (pd.DataFrame): variable objetivo
+    """
+    print(80 * "=", "\n", X.head()) # mostrar las primeras filas
     print(80 * "=")
     
 
@@ -31,26 +30,41 @@ def eda():
 
     plot_boxs(X[["ca", "thal"]])
     plot_nans(X[["ca", "thal"]])
+    
+    return
 
-    return X, y
 
-# función para tranformar los dataos
 def transform_data(X, y):
-    # Convertir la variable objetivo en binaria
-    y = (y["num"] > 0).astype(int)
-    X.dropna()
+    """
+    Transformar los datos
+    Args:
+        X (pd.DataFrame): características
+        y (pd.DataFrame): variable objetivo
+    Returns:
+        X (np.ndarray): características transformadas
+        y (pd.Series): variable objetivo transformada
+    """
+    y = (y["num"] > 0).astype(int)           # Convertir variable a binaria
+    data = X.copy() ; data["y"] = y.values   # para droppear junto etiquetas
+    data = data.dropna()                     # eliminar filas con NaNs
+    y = data["y"] ; X = data.drop(columns=["y"])    # separar etiquetas
 
-    scaler = StandardScaler()
+    scaler = StandardScaler()   # escalar
     X = scaler.fit_transform(X)
+
     return X, y
+
 
 if __name__ == "__main__":
-    from src.load_data import save_processed_data
+    from src.load_data import save_heart_disease
+    from src import PROCESSED_DATA_PATH, RAW_DATA_PATH
+    from src.load_data import read_heart_disease
     from matplotlib import pyplot as plt
 
-    plt.rcParams["figure.constrained_layout.use"] = True
+    plt.rcParams["figure.constrained_layout.use"] = True # layout de las figuras
 
-    X, y = eda()
-    X, y = transform_data(X, y)
-    save_processed_data(X, y)
+    X, y = read_heart_disease(RAW_DATA_PATH)    # leer los datos crudos
+    eda(X, y)                                   # ejecutar EDA
+    X, y = transform_data(X, y)                 # transformar los datos
+    save_heart_disease(X, y, PROCESSED_DATA_PATH) # guardar los datos procesados
 
