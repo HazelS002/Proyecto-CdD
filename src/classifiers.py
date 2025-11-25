@@ -3,7 +3,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 import joblib
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import accuracy_score, roc_auc_score, precision_score,\
+    recall_score, f1_score, balanced_accuracy_score
 from src import MODELS_PATH
 
 def classifiers(X_train, y_train):
@@ -44,7 +45,8 @@ def save_models(models:dict[str, object]) -> None:
     """
 
     for name, model in models.items():
-        joblib.dump(model, MODELS_PATH + f'{name.lower().replace(" ", "-")}.joblib')
+        joblib.dump(model, MODELS_PATH +\
+                    f'{name.lower().replace(" ", "-")}.joblib')
 
 def load_models() -> dict[str, object]:
     """ Carga los modelos entrenados desde archivos .joblib
@@ -64,68 +66,62 @@ def load_models() -> dict[str, object]:
     return models
 
 def evaluate_classifiers(X_test, y_test, models:dict[str, object]) -> None:
-
+    
     for name, model in models.items():
         y_pred = model.predict(X_test)
         y_prob = model.predict_proba(X_test)[:, 1]
-        accuracy = np.mean(y_pred == y_test)
+
+        accuracy = accuracy_score(y_test, y_pred)
         auc = roc_auc_score(y_test, y_prob)
-        print(f"{name} - Accuracy: {accuracy:.3f}, AUC-ROC: {auc:.3f}")
+        precision = precision_score(y_test, y_pred)
+        recall = recall_score(y_test, y_pred)
+        f1 = f1_score(y_test, y_pred)
+        bal_acc = balanced_accuracy_score(y_test, y_pred)
+
+        print(f"\n{name}")
+        
+        print(f"\tRecall (Sensitivity): {recall:.3f}")
+        print(f"\tAccuracy:             {accuracy:.3f}")
+        print(f"\tBalanced Accuracy:    {bal_acc:.3f}")
+        print(f"\tAUC-ROC:              {auc:.3f}")
+        print(f"\tPrecision:            {precision:.3f}")
+        print(f"\tF1-score:             {f1:.3f}")
 
     return
+
 
 
 if __name__ == "__main__":
     from src.load_data import read_heart_disease
     from src import PROCESSED_DATA_PATH
     from sklearn.model_selection import train_test_split
+    from src.visualitation import plot_matrix_confusion, plot_nn_metrics,\
+        plot_logistic_coefficients, plot_feature_importance
+    from matplotlib import pyplot as plt
+
+    plt.rcParams["figure.constrained_layout.use"] = True # layout de las figuras
 
     X, y = read_heart_disease(PROCESSED_DATA_PATH)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
+                                                        random_state=42,
+                                                        stratify=y)
 
     # # Entrenar y guardar modelos
     # models = classifiers(X_train, y_train.values.ravel())
     # save_models(models)
 
-    models = load_models()
+    models = load_models()  # Cargar modelos entrenados
     evaluate_classifiers(X_test, y_test.values.ravel(), models)
 
+    features_names = ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg",
+                      "thalach", "exang", "oldpeak", "slope", "ca", "thal"]
+
+    plot_feature_importance(models['Random Forest'], features_names)
+
+    plot_logistic_coefficients(models['Logistic Regression'], features_names)
+
+    plot_nn_metrics(models['Neural Network'])
 
 
+    plot_matrix_confusion(X_test, y_test, models)
 
-
-# # print(f"Importancia características: {rf.feature_importances_[:3]}...")  # Primeras 3
-# # print(f"Coeficientes rango: [{lr.coef_.min():.3f}, {lr.coef_.max():.3f}]")
-# # print(f"Arquitectura: {nn.hidden_layer_sizes}")
-
-
-# # =============================================================================
-# # COMPARACIÓN FINAL
-# # =============================================================================
-# print("\n" + "="*60)
-# print("COMPARACIÓN FINAL")
-# print("="*60)
-
-# models = {
-#     'Random Forest': (y_pred_rf, y_prob_rf, False),
-#     'Regresión Logística': (y_pred_lr, y_prob_lr, True),
-#     'Red Neuronal': (y_pred_nn, y_prob_nn, True)
-# }
-
-# print("\nMÉTRICAS COMPARATIVAS:")
-# print(f"{'Modelo':<20} {'Accuracy':<10} {'AUC-ROC':<10} {'Requiere Escalado'}")
-# for name, (y_pred, y_prob, scaled) in models.items():
-#     acc = np.mean(y_pred == y_test)
-#     auc = roc_auc_score(y_test, y_prob)
-#     scale_flag = "Sí" if scaled else "No"
-#     print(f"{name:<20} {acc:<10.3f} {auc:<10.3f} {scale_flag:<15}")
-
-# # =============================================================================
-# # RESULTADOS ESPERADOS
-# # =============================================================================
-# print("\n" + "="*60)
-# print("RESULTADOS ESPERADOS:")
-# print("1. Random Forest: ~0.85 accuracy - Más estable, menos overfitting")
-# print("2. Regresión Logística: ~0.82 accuracy - Buen balance interpretabilidad/performance")  
-# print("3. Red Neuronal: ~0.83 accuracy - Potencial mejor performance con tuning")
-# print("\nOBSERVACIÓN: Red Neuronal puede sufrir overfitting sin regularización adecuada")
