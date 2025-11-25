@@ -12,12 +12,14 @@
 Proyecto-CdD/
 │
 ├───data/           # gestion de los datos
-│   ├───cleaned/    # datos preprocesados
+│   ├───processed/  # datos preprocesados
 │   └───raw/        # datos originales
 │
 ├───reports/        # reporte de resultados y presentación
 │   └───figures/
-└───src/            # Código fuente principal
+├───src/            # Código fuente principal
+│
+└───models/         # modelos entrenados
 ```
 
 ---
@@ -37,10 +39,10 @@ conda env create -f environment.yml
 conda activate data-science
 ```
 
-### Dependencias
+<!-- ### Dependencias
 #### Dependencias principales
 
-#### Dependencias secundarias
+#### Dependencias secundarias -->
 
 ---
 
@@ -51,18 +53,15 @@ conda activate data-science
 # Ejecutar 
 python -m src.<file-name>
 ```
-
-**Funcionalidades en desarrollo:**
-- 
-- Controlar rutas desde un sólo archivo
+<!-- 
 
 ---
 
-## Estructura de Datos
+## Estructura de Datos -->
 
-### Formato de Entrada
+<!-- ### Formato de Entrada
 
----
+--- -->
 
 ## Desarrollo
 
@@ -100,7 +99,7 @@ conda env update -f environment.yml --prune
 
 ### Compilar Reporte
 ```bash
-# Generar reportes
+# Generar reporte
 cd report/
 pdflatex report.tex
 ```
@@ -110,7 +109,3 @@ pdflatex report.tex
 - **Autor**: Hazel Shamed
 - **Repositorio**: [github.com/HazelS002/Proyecto-CdD](https://github.com/HazelS002/Proyecto-CdD)
 - **Institución**: Universidad de Guanajuato
-
----
-
-*Este proyecto está en desarrollo activo. La estructura y funcionalidades pueden cambiar.*
