@@ -8,7 +8,7 @@
 ```
 Proyecto-CdD/
 │
-├───data            # gestin de los datos
+├───data            # gestion de los datos
 │   ├───cleaned     # datos preprocesados
 │   └───raw         # datos originales
 │
