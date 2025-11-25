@@ -302,9 +302,63 @@
 
     \subsection{Preparación y limpieza}
 
-    \subsection{Codificación de variables categóricas}
+    Como mencionamos anteriormente, las variables \texttt{ca} y \texttt{thal}
+    presentan valores faltantes. A continuación, mostramos de forma grafica
+    como se distribiuyen estos valores faltantes en el dataset y a su vez
+    analizamos la posible presencia de outliers a través de boxplots.
 
-    \subsection{Buenas prácticas y control de fuga de información}
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.4\textwidth]{./figures/ca_thal_nans.png}
+        \includegraphics[width=0.4\textwidth]{./figures/ca_thal_boxplots.png}
+        \caption{Valores faltantes y boxplots de \texttt{ca} y \texttt{thal}}
+        \label{fig:ca_thal}
+    \end{figure}
+
+    A simple vista observamos que los datos faltes no siguen un patrón
+    específico, por lo que optamos por eliminar las filas con valores faltantes,
+    resultando en un total de 297 observaciones. En cuanto a los
+    outliers, considerando tambien la siguiente tabla, no se observan valores
+    extremos evidentes que justifiquen una eliminación, por lo que los
+    conservamos para el analisis posterior.
+
+    \begin{table}[ht]
+        \centering
+        \caption{Distribución de Variables Categóricas}
+        \label{tab:distribucion_categorica}
+        \begin{tabular}{lcc}
+            \toprule
+            \textbf{Variable} & \textbf{Valor} & \textbf{Frecuencia} \\
+            \midrule
+            \multirow{ca} 
+                & 0.0 & 176 \\
+                & 1.0 & 65 \\
+                & 2.0 & 38 \\
+                & 3.0 & 20 \\
+            \midrule
+            \multirow{thal}
+                & 3.0 & 166 \\
+                & 7.0 & 117 \\
+                & 6.0 & 18 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    Por otro lado, se seleccionó \tetit{StandardScaler} para el preprocesamiento
+    de los datos debido a su idoneidad en el contexto de variables biomédicas.
+    Este método transforma las características restándoles la media y
+    escalándolas por la desviación estándar, resultando en una distribución con
+    media cero y varianza unitaria. Esta estandarización es crucial para
+    algoritmos sensibles a la escala, como la regresión logística y las redes
+    neuronales, ya que acelera la convergencia y asegura que los coeficientes
+    o pesos se ajusten de manera equilibrada. A diferencia de MinMaxScaler, que
+    es sensible a valores atípicos, StandardScaler preserva la forma original de
+    la distribución y maneja mejor los rangos variables de las características
+    (como colesterol: 126-564 y presión arterial: 94-200). Dado que los valores
+    atípicos en datos biomédicos suelen ser clínicamente relevantes y no errores
+    de medición, StandardScaler resulta el balance óptimo entre robustez y
+    preservación de la información.
+
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DESARROLLO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

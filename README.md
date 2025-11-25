@@ -8,13 +8,13 @@
 ```
 Proyecto-CdD/
 │
-├───data            # gestion de los datos
-│   ├───cleaned     # datos preprocesados
-│   └───raw         # datos originales
+├───data/           # gestion de los datos
+│   ├───cleaned/    # datos preprocesados
+│   └───raw/        # datos originales
 │
-├───reports         # reporte de resultados y presentación
-│   └───figures
-└───src             # Código fuente principal
+├───reports/        # reporte de resultados y presentación
+│   └───figures/
+└───src/            # Código fuente principal
 ```
 
 ## Instalación y Configuración
