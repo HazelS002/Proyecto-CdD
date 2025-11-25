@@ -1,0 +1,346 @@
+\documentclass[10pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[a4paper, tmargin=0.75in, lmargin=0.80in, rmargin=0.80in,
+    bmargin=1in]{geometry}
+\usepackage{hyperref}
+%\usepackage{multicol}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=blue,
+    citecolor=black,
+}
+%\usepackage[numbers,sort&compress]{natbib} % for a numerical citation list
+\usepackage{natbib} % to cite references by surname and year
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{tabularx}
+\usepackage{pdflscape}
+\usepackage{booktabs}
+\usepackage{bbm}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\usepackage[
+  backend=biber,
+  style=alphabetic,
+  citestyle=alphabetic,
+  doi=true,
+  url=true,
+  isbn=false,
+  eprint=false,
+  maxbibnames=99
+]{biblatex}
+
+\addbibresource{referencias.bib}
+
+% Definimos colores estilo "terminal con fondo negro"
+\definecolor{backcolour}{rgb}{0.1,0.1,0.1}
+\definecolor{codegreen}{rgb}{0,0.8,0}
+\definecolor{codegray}{rgb}{0.7,0.7,0.7}
+\definecolor{codepurple}{rgb}{0.8,0.6,1}
+\definecolor{codewhite}{rgb}{1,1,1}
+
+
+\lstdefinestyle{mypython}{
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\scriptsize\color{codewhite},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codepurple},
+    stringstyle=\color{codegreen},
+    numbers=left,
+    numberstyle=\tiny\color{codegray},
+    breaklines=true,
+    breakatwhitespace=false,
+    showstringspaces=false,
+    tabsize=4
+}
+
+\lstset{style=mypython}
+
+
+\pagestyle{empty}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ENTER SOME IMPORTANT INFORMATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\studentname}{Hazel Shamed Sánchez Chávez}
+% \newcommand{\researchcentre}{Maestría en Probabilidad y Estadística}
+\newcommand{\institution}{Centro de Investigación en Matemáticas (CIMAT)}
+\newcommand{\projecttitle}{Proyecto: Clasificación de Riesgo Cardiovascular}
+\newcommand{\supervisor}{Dr. Marco Antonio Aquino López}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setlength{\parindent}{1em}
+\setlength{\parskip}{1em}
+
+
+\begin{document}
+
+    \begin{center}
+        {\Large{Proyecto 2: Clasificación de Riesgo Cardiovascular}} \\
+        \vspace{2mm}
+        {\Large{Introducción a la Ciencia de Datos}} \\
+    \end{center}
+
+    \vspace{5mm}
+    \hrule
+    \vspace{1mm}
+    \hrule
+
+    \vspace{3mm}
+    \begin{tabular}{ll} 
+        Estudiante:           	        & {\studentname}   \\ 
+        % Programa Educativo: 	        & {\researchcentre}  \\ 
+        Institución:                 & {\institution}  \\
+        Profesor: 	                 & {\supervisor}  \\ 
+    \end{tabular}
+
+    \vspace{3mm}
+    \hrule
+    \vspace{1mm}
+    \hrule
+
+    % \begin{abstract}
+    % \end{abstract}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%% INTRODUCCIÓN %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \section{Introducción}
+
+    En el ámbito de la salud pública, las enfermedades
+    cardiovasculares (ECV) constituyen una de las principales causas de
+    mortalidad a nivel global, representando aproximadamente el 32\% de todas
+    las defunciones según la Organización Mundial de la Salud. La identificación
+    temprana de individuos en riesgo representa un desafío crítico para los
+    sistemas de salud, con implicaciones significativas en la reducción de la
+    carga asistencial y la mejora de resultados clínicos.
+
+    Este proyecto se enfoca en el desarrollo de un modelo predictivo de
+    clasificación de riesgo cardiovascular utilizando el dataset
+    \textit{"Heart Disease"} del repositorio UCI Machine Learning, que contiene
+    registros clínicos y biomédicos de 303 pacientes. La base de datos integra
+    signos clínicos, parámetros de laboratorio y características
+    electrocardiográficas, proporcionando una base multidimensional para el
+    análisis.
+
+    Las ECV representan condiciones patológicas que afectan el corazón y los
+    vasos sanguíneos, incluyendo enfermedad coronaria, enfermedad
+    cerebrovascular y cardiopatía reumática. La naturaleza multifactorial de
+    estas patologías demanda aproximaciones analíticas capaces de integrar
+    diversos predictores, desde factores de riesgo convencionales hasta
+    marcadores específicos de función cardíaca.
+
+    El objetivo central de este proyecto es construir un clasificador
+    binario que permita discriminar entre pacientes con presencia y ausencia de
+    enfermedad cardiovascular, utilizando únicamente variables accesibles
+    mediante exámenes clínicos rutinarios. Este enfoque pretende superar las
+    limitaciones de los métodos diagnósticos invasivos, optimizando la
+    asignación de recursos diagnósticos especializados.
+
+    La implementación exitosa de este modelo podría servir como herramienta de
+    apoyo a la decisión clínica, facilitando la estratificación prioritaria de
+    pacientes y contribuyendo a estrategias de prevención secundaria más
+    efectivas en el manejo de enfermedades cardiovasculares.
+
+
+    \section{Exploración inicial de los datos}\label{sec:dataset}
+
+    \subsection{Base de datos \textit{Heart Disease}.}
+
+
+    El dataset ``Heart Disease'', de $303$ filas por $13$ columnas (mas etiquetas),
+    fue recopilado principalmente por la \textbf{Cleveland Clinic Foundation}
+    bajo la dirección del Dr. Robert Detrano, M.D., Ph.D., con la colaboración
+    de múltiples instituciones internacionales incluyendo el Hungarian Institute
+    of Cardiology de Budapest, University Hospital de Zurich y University
+    Hospital de Basel. Los datos fueron donados al UCI Machine Learning
+    Repository en 1988, donde están disponibles públicamente con el
+    identificador $45$.
+
+    El estudio se condujo como una investigación observacional multicéntrica
+    entre 1979 y 1988, abarcando aproximadamente 10 años de recolección de
+    datos. La población del estudio consistió en 303 pacientes referidos para
+    evaluación coronaria en las instituciones participantes. El criterio de
+    referencia para el diagnóstico fue la angiografía coronaria, definiendo como
+    caso positivo la presencia de $\geq$50\% de estrechamiento diametral.
+
+    El dataset original contenía 76 variables recolectadas, pero para el
+    análisis estándar se seleccionaron 14 atributos que incluyen signos
+    clínicos, parámetros de laboratorio y características
+    electrocardiográficas.
+  
+    \subsection{Variables del Dataset}
+
+    Al descargar el dataset, las variables categoricas ya vienen dadas de forma
+    numerica, asignando un valor entero a cada categoría de cada variable. Esto
+    facilita la manipulación y calculos de los datos. Presentamos una tabla
+    resumen de las variables del dataset:
+
+    \begin{table}[ht]
+        \centering
+        \small
+        \caption{Variables del Dataset Heart Disease}
+        \label{tab:variables}
+        \begin{tabular}{>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{2cm}>{\raggedright\arraybackslash}p{6cm}>{\raggedright\arraybackslash}p{3cm}}
+            \toprule
+            \textbf{Atributo} & \textbf{Tipo} & \textbf{Descripción} & \textbf{Valores} \\
+            \midrule
+            age & Continuo & Edad en años & 29-77 \\
+            sex & Categórico & Sexo & 0 = fem, 1 = masc \\
+            cp & Categórico & Tipo de dolor torácico & 1-4 \\
+            trestbps & Continuo & Presión arterial en reposo (mm Hg) & 94-200 \\
+            chol & Continuo & Colesterol sérico (mg/dl) & 126-564 \\
+            fbs & Categórico & Glicemia en ayunas $>$120 mg/dl & 0 = no, 1 = sí \\
+            restecg & Categórico & Resultado ECG en reposo & 0-2 \\
+            thalach & Continuo & Frecuencia cardíaca máxima alcanzada & 71-202 \\
+            exang & Categórico & Angina inducida por ejercicio & 0 = no, 1 = sí \\
+            oldpeak & Continuo & Depresión ST inducida por ejercicio & 0-6.2 \\
+            slope & Categórico & Pendiente del segmento ST en ejercicio & 1-3 \\
+            ca & Continuo & Número de vasos principales coloreados & 0-3 \\
+            thal & Categórico & Tipo de defecto talio & 3 = normal, 6 = defecto, 7 = reversible \\
+            \midrule
+            num & Objetivo & Diagnóstico de enfermedad & 0 = no, 1-4 = sí \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    Estos signos clínicos, parámetros de laboratorio y características
+    electrocardiográficas se interpretan desde el punto de vista médico de la
+    siguiente manera:
+    \begin{itemize}
+        \item El dolor torácico (cp) se clasifica en cuatro tipos: anginoso
+        típico (dolor opresivo por esfuerzo), atípico, no anginoso y ausente.
+        \item El colesterol sérico (chol) cuantifica los lípidos en sangre en
+        $mg/dl$.
+        \item La glicemia en ayunas (fbs) indica diabetes si supera $120 mg/dl$.
+        \item El electrocardiograma en reposo (restecg) detecta anomalías ST-T o
+        hipertrofia ventricular.
+        \item La frecuencia cardíaca máxima (thalach) registra el pico de
+        esfuerzo.
+        \item La angina inducida por ejercicio (exang) señala dolor durante la
+        prueba de esfuerzo.
+        \item La depresión del segmento ST (oldpeak) mide en milivolts la
+        isquemia miocárdica durante el ejercicio.
+        \item La pendiente del segmento ST (slope) evalúa si es ascendente
+        (normal), plana o descendente (patológica).
+        \item Los vasos principales coloreados (ca) indican cuántas arterias
+        coronarias tienen obstrucción ≥50\% en angiografía.
+        \item La prueba de talio (thal) evalúa perfusión cardíaca: normal,
+        defecto fijo (infarto) o reversible (isquemia).
+        \item El diagnóstico (num) clasifica la severidad de la enfermedad
+        desde $0$ (ausente) hasta $4$ (severa).
+    \end{itemize}
+    
+    A continuación, se presentan las estadísticas descriptivas de estas 
+    variables:
+
+    \newpage
+
+    \begin{table}[ht]
+        \centering
+        \small
+        \caption{Estadísticas Descriptivas del Dataset}
+        \label{tab:estadisticas_descriptivas}
+        \begin{tabular}{l*{13}{r}}
+            \toprule
+            & \textbf{age} & \textbf{sex} & \textbf{cp} & \textbf{trestbps} & \textbf{chol} & \textbf{fbs} & \textbf{restecg} & \textbf{thalach} & \textbf{exang} & \textbf{oldpeak} & \textbf{slope} & \textbf{ca} & \textbf{thal} \\
+            \midrule
+            count & 303 & 303 & 303 & 303 & 303 & 303 & 303 & 303 & 303 & 303 & 303 & 299 & 301 \\
+            mean & 54.4 & 0.68 & 3.16 & 131.69 & 246.69 & 0.15 & 0.99 & 149.61 & 0.33 & 1.04 & 1.60 & 0.67 & 4.73 \\
+            std & 9.04 & 0.47 & 0.96 & 17.60 & 51.78 & 0.36 & 0.99 & 22.88 & 0.47 & 1.16 & 0.62 & 0.94 & 1.94 \\
+            min & 29 & 0 & 1 & 94 & 126 & 0 & 0 & 71 & 0 & 0.00 & 1 & 0 & 3 \\
+            25\% & 48 & 0 & 3 & 120 & 211 & 0 & 0 & 134 & 0 & 0.00 & 1 & 0 & 3 \\
+            50\% & 56 & 1 & 3 & 130 & 241 & 0 & 1 & 153 & 0 & 0.80 & 2 & 0 & 3 \\
+            75\% & 61 & 1 & 4 & 140 & 275 & 0 & 2 & 166 & 1 & 1.60 & 2 & 1 & 7 \\
+            max & 77 & 1 & 4 & 200 & 564 & 1 & 2 & 202 & 1 & 6.20 & 3 & 3 & 7 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \subsection{Consideraciones Adicionales}
+
+    Es importante señalar que el dataset presenta algunos valores faltantes en
+    los atributos \texttt{ca} y \texttt{thal}. La distribución de la variable
+    objetivo muestra que de los 303 pacientes, 164 no presentaban enfermedad
+    cardiovascular (valor 0), mientras que 139 presentaban diversos grados de
+    enfermedad (valores 1-4), esto indica que las clases son desbalanceadas.
+
+    Entre las limitaciones del dataset se debe considerar su contexto temporal
+    (datos de 1979-1988), donde los criterios diagnósticos y prácticas clínicas
+    pueden diferir de los estándares actuales. Además, la muestra representa
+    una población específica de pacientes referidos para angiografía, lo que
+    puede introducir sesgos de selección. Cabe resaltar que el dataset no
+    incluye factores de riesgo modernos como proteína C reactiva o score cálcico
+    coronario.
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%% PREPROCESAMIENTO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \section{Preprocesamiento}
+    El preprocesamiento tiene como finalidad transformar la base de datos
+    \textit{Heart Disease} en una matriz de diseño adecuado para el modelado
+    supervisado. En particular, buscamos, 
+    \begin{itemize}
+        \item[a)] homogenizar la escala de las variables numéricas para
+        algoritmos sensibles a la magnitud, 
+        \item[b)] separar correctamente predictores $X$ y respuesta $y$
+        evitando fugas de información. 
+    \end{itemize}
+
+    \subsection{Preparación y limpieza}
+
+    \subsection{Codificación de variables categóricas}
+
+    \subsection{Buenas prácticas y control de fuga de información}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DESARROLLO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \section{Clasificación y evaluación de modelos}
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CONCLUSIONES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \section{Conclusiones}
+
+
+
+\end{document}
+
+
+@misc{heart_disease_1988,
+  title={Heart Disease Data Set},
+  author={Detrano, R. and Janosi, A. and Steinbrunn, W. and Pfisterer, M.},
+  year={1988},
+  publisher={UCI Machine Learning Repository}
+}
+
+
+@article{detrano1989international,
+  title={International application of a new probability algorithm for the diagnosis of coronary artery disease},
+  author={Detrano, R. and others},
+  journal={The American Journal of Cardiology},
+  volume={64},
+  number={5},
+  pages={304--310},
+  year={1989},
+  publisher={Elsevier}
+}
