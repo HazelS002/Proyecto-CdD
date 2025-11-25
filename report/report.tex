@@ -37,7 +37,7 @@
   maxbibnames=99
 ]{biblatex}
 
-\addbibresource{referencias.bib}
+\addbibresource{references.bib}
 
 % Definimos colores estilo "terminal con fondo negro"
 \definecolor{backcolour}{rgb}{0.1,0.1,0.1}
@@ -366,6 +366,129 @@
 
 
     \section{Clasificación y evaluación de modelos}
+    
+    Basados en las propiedades metodológicas y las ventajas prácticas que cada
+    clasificador ofrece para el análisis de riesgo de enfermedades
+    cardiovasculares, hemos elejido implementar tres clasificadores. Estos son:
+    bosques aleatorios, regresión logística y redes neuronales.
+
+    \subsection{Random Forest}
+    
+    El modelo \textit{Random Forest} combina múltiples árboles de decisión para
+    mejorar la precisión y estabilidad del clasificador. Es adecuado para datos
+    clínicos porque maneja variables categóricas y continuas sin
+    preprocesamientos complejos, captura relaciones no lineales y ofrece medidas
+    de importancia de variables que apoyan la interpretación.
+
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.5\textwidth]{./figures/feature_importance.png}
+        \caption{Importancia de características en Random Forest}
+        \label{fig:random_forest}
+    \end{figure}
+
+    \subsection{Regresión Logística}
+    
+    La regresión logística es un modelo lineal ampliamente utilizado en
+    clasificación binaria por su sencillez e interpretabilidad. Proporciona
+    coeficientes en términos de \textit{odds ratios}, genera probabilidades
+    predichas adecuadas para definir umbrales clínicos y presenta bajo riesgo de
+    sobreajuste, lo que la convierte en una línea base robusta. Su principal
+    limitación es la suposición de linealidad en el logit.
+
+    La importancia de las variables según los coeficientes del modelo se muestra
+    en la siguiente figura:
+
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.5\textwidth]{./figures/logistic_coefficients.png}
+        \caption{Coeficientes de la Regresión Logística}
+        \label{fig:logistic_regression}
+    \end{figure}
+
+    \subsection{Red Neuronal}
+    
+    Las redes neuronales son modelos flexibles capaces de aprender patrones no
+    lineales complejos y adaptarse mediante arquitecturas específicas y técnicas
+    de regularización como \textit{dropout}. Resultan útiles cuando existen
+    interacciones difíciles de capturar con modelos tradicionales. Sin embargo,
+    requieren más datos y cuidado en su ajuste debido al riesgo de sobreajuste
+    y su menor interpretabilidad.
+
+    Durante el entrenamiento, se monitoreó la función de pérdida para evaluar la
+    convergencia del modelo, como se observa en la siguiente figura:
+
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.5\textwidth]{./figures/loss_function.png}
+        \caption{Curva de pérdida durante el entrenamiento de la Red Neuronal}
+        \label{fig:nn_loss_curve}
+    \end{figure}
+
+
+    \subsection{Comparación de los modelos}
+
+    Las gráficas de importancia de características en el bosque aleatorio
+    evidencia qué variables aportan mayor poder predictivo. Por otro lado, los
+    coeficientes de la regresión logística permiten entender la dirección e
+    influencia de cada variable en el riesgo estimado. La curva de pérdida de la
+    red neuronal confirma un proceso de aprendizaje estable sin señales
+    evidentes de sobreajuste.
+
+    Mostramos las siguientes mmétricas que se obtuvieron en cada modelo:
+    \begin{table}[ht]
+        \centering
+        \caption{Métricas de desempeño para los clasificadores}
+        \label{tab:metrics_cardiovascular}
+        \begin{tabular}{lccc}
+            \toprule
+            \textbf{Métrica} & \textbf{Random Forest} & \textbf{Logistic Regression} & \textbf{Neural Network} \\
+            \midrule
+            Recall (Sensitivity)    & 0.750 & 0.786 & 0.857 \\
+            Accuracy                & 0.817 & 0.833 & 0.850 \\
+            Balanced Accuracy       & 0.812 & 0.830 & 0.850 \\
+            AUC-ROC                 & 0.941 & 0.950 & 0.910 \\
+            Precision               & 0.840 & 0.846 & 0.828 \\
+            F1-score                & 0.792 & 0.815 & 0.842 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    Los tres modelos muestran un desempeño sólido, pero con diferencias
+    relevantes según la métrica. La red neuronal alcanza la mayor recall (0.857)
+    y la mayor accuracy y balanced accuracy (0.850), lo que indica que es la
+    opción más efectiva para detectar casos positivos (minimizar falsos negativos),
+    aspecto crítico en un problema clínico donde no detectar a un paciente
+    enfermo es costoso. Sin embargo, su AUC-ROC (0.910) es la más baja de los
+    tres, lo que sugiere que, globalmente, discrimina algo peor entre clases a
+    través de todos los umbrales que la regresión logística (AUC 0.950). La 
+    regresión logística presenta el mejor AUC-ROC y buena precisión (0.846) y F1
+    (0.815), lo que la convierte en un modelo muy equilibrado y con excelente
+    capacidad de discriminación (útil si se busca un compromiso entre detectar
+    enfermos y limitar falsos positivos). El bosque aleatorio queda en posición
+    intermedia: buena AUC (0.941) y precisión (0.840), pero menor recall
+    (0.750), por lo que produce más falsos negativos que la red neuronal.
+    
+    Por lo tanto, si la prioridad clínica es maximizar la detección
+    (minimizar FN) es conveniente usar la red neuronal; si se prioriza la
+    capacidad de discriminación global y estabilidad interpretativa, la
+    regresión logística es la opción preferible; el bosque aleatorio es una
+    alternativa intermedia.
+    
+    A continuación, se presentan las matrices de confusión para cada modelo:
+
+    \begin{figure}[ht]
+        \centering
+        \includegraphics[width=0.5\textwidth]{./figures/confusion_matrix.png}
+        \caption{Matrices de confusión para los clasificadores}
+        \label{fig:confusion_matrices}
+    \end{figure}
+
+    Las matrices de confusión ilustran claramente la diferencia en patrones de
+    error entre modelos, destacando el mejor desempeño de la red neuronal en la
+    detección de casos positivos.
+    
+
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -375,26 +498,39 @@
 
     \section{Conclusiones}
 
+    El análisis desarrollado sobre el conjunto de datos clínicos permitió
+    evaluar el desempeño de tres modelos de clasificación orientados a la
+    detección de riesgo cardiovascular, identificando fortalezas, limitaciones y
+    su utilidad potencial en un contexto aplicado. Los resultados muestran que
+    la regresión logística ofrece la mayor capacidad discriminativa global con
+    una AUC-ROC cercana a $0.95$, lo que la convierte en el modelo más estable
+    cuando se requiere equilibrio entre sensibilidad y especificidad. Por su
+    parte, la red neuronal presenta la sensibilidad más alta del estudio y
+    alcanza la mejor exactitud y balanced accuracy, lo cual la posiciona como
+    la alternativa más adecuada cuando la prioridad clínica es reducir al mínimo
+    los falsos negativos y asegurar que la mayoría de los pacientes con riesgo
+    sean identificados oportunamente. El modelo de bosques aleatorio, aunque
+    competitivo, tiende a generar un mayor número de falsos negativos respecto
+    a la red neuronal, situándose en un punto intermedio tanto en desempeño
+    como en robustez.
 
+    No obstante, el estudio presenta limitaciones relevantes: el conjunto de
+    datos es antiguo y no necesariamente representativo de poblaciones actuales,
+    existe presencia de valores faltantes y cierto desbalance de clases, y los
+    datos provienen de pacientes referidos para procedimientos
+    cardiovasculares, lo que puede introducir sesgos de selección.
+
+    \section*{Referencias}
+
+    % \printbibliography
+
+    \begin{itemize}
+        \item \textbf{Dataset:} Detrano, R. et al. (1988).
+        \textit{Heart Disease Dataset}. UCI Machine Learning Repository. Recuperado el 25 de noviembre de 2025 de https://archive.ics.uci.edu/ml/datasets/Heart+Disease
+        
+        \item \textbf{Organización Mundial de la Salud (2021).}
+        \textit{Cardiovascular Diseases (CVDs)}. Recuperado de https://www.who.
+        int/news-room/fact-sheets/detail/cardiovascular-diseases-(cvds). Nota: Las ECV representan el 32\% de las muertes globales
+    \end{itemize}
 
 \end{document}
-
-
-@misc{heart_disease_1988,
-  title={Heart Disease Data Set},
-  author={Detrano, R. and Janosi, A. and Steinbrunn, W. and Pfisterer, M.},
-  year={1988},
-  publisher={UCI Machine Learning Repository}
-}
-
-
-@article{detrano1989international,
-  title={International application of a new probability algorithm for the diagnosis of coronary artery disease},
-  author={Detrano, R. and others},
-  journal={The American Journal of Cardiology},
-  volume={64},
-  number={5},
-  pages={304--310},
-  year={1989},
-  publisher={Elsevier}
-}

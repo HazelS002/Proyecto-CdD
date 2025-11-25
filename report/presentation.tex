@@ -1,0 +1,303 @@
+\documentclass[10pt,spanish]{beamer}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Tema de Beamer
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Definimos colores estilo "terminal con fondo negro"
+\definecolor{backcolour}{rgb}{0.1,0.1,0.1}
+\definecolor{codegreen}{rgb}{0,0.8,0}
+\definecolor{codegray}{rgb}{0.7,0.7,0.7}
+\definecolor{codepurple}{rgb}{0.8,0.6,1}
+\definecolor{codewhite}{rgb}{1,1,1}
+
+\lstdefinestyle{mypython}{
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\scriptsize\color{codewhite},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codepurple},
+    stringstyle=\color{codegreen},
+    numbers=left,
+    numberstyle=\tiny\color{codegray},
+    breaklines=true,
+    breakatwhitespace=false,
+    showstringspaces=false,
+    tabsize=4
+}
+
+\lstset{style=mypython}
+
+% Información del título
+\title{Clasificación de Riesgo Cardiovascular}
+\subtitle{Proyecto 2: Introducción a la Ciencia de Datos}
+\author{Hazel Shamed Sánchez Chávez}
+\institute{Centro de Investigación en Matemáticas (CIMAT)}
+\date{}
+\titlegraphic{\includegraphics[width=3cm]{figures/logo_cimat.png}}
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Contenido}
+    \begin{itemize}
+        \item Introducción
+        \item Exploración de datos
+        \item Preprocesamiento
+        \item Modelos de Clasificación
+        \item Resultados y Comparación
+        \item Conclusiones
+    \end{itemize}
+\end{frame}
+
+\section{Introducción}
+\begin{frame}{Introducción}
+    \begin{itemize}
+        \item Las enfermedades cardiovasculares (ECV) representan \textbf{32\% de todas las defunciones} globales (OMS)
+        \item Identificación temprana: desafío crítico para sistemas de salud
+        \item Dataset \textit{"Heart Disease"} del repositorio UCI:
+        \begin{itemize}
+            \item 303 pacientes
+            \item Registros clínicos y biomédicos
+            \item Signos clínicos, parámetros de laboratorio, características electrocardiográficas
+        \end{itemize}
+        \item \textbf{Objetivo}: Clasificador binario para discriminar presencia/ausencia de enfermedad cardiovascular
+    \end{itemize}
+\end{frame}
+
+\section{Exploración de datos}
+\begin{frame}{Base de datos Heart Disease}
+    \begin{itemize}
+        \item \textbf{Fuente}: Cleveland Clinic Foundation (Dr. Robert Detrano)
+        \item \textbf{Período}: 1979-1988 (10 años)
+        \item \textbf{Pacientes}: 303 referidos para evaluación coronaria
+        \item \textbf{Criterio diagnóstico}: Angiografía coronaria ($\geq$50\% de estrechamiento)
+        \item \textbf{Dimensión}: 303 filas $\times$ 13 columnas + etiqueta
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Variables del Dataset}
+    \scriptsize
+    \begin{table}
+        \begin{tabular}{lllp{4cm}}
+            \toprule
+            \textbf{Variable} & \textbf{Tipo} & \textbf{Descripción} \\
+            \midrule
+            age & Continuo & Edad en años (29-77) \\
+            sex & Categórico & Sexo (0=fem, 1=masc) \\
+            cp & Categórico & Tipo de dolor torácico (1-4) \\
+            trestbps & Continuo & Presión arterial en reposo (mm Hg) \\
+            chol & Continuo & Colesterol sérico (mg/dl) \\
+            fbs & Categórico & Glicemia en ayunas $>$120 mg/dl \\
+            restecg & Categórico & Resultado ECG en reposo \\
+            thalach & Continuo & Frecuencia cardíaca máxima \\
+            exang & Categórico & Angina inducida por ejercicio \\
+            oldpeak & Continuo & Depresión ST inducida \\
+            slope & Categórico & Pendiente del segmento ST \\
+            ca & Continuo & Vasos principales coloreados \\
+            thal & Categórico & Tipo de defecto talio \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+\end{frame}
+
+\begin{frame}{Estadísticas Descriptivas}
+    \scriptsize
+    \begin{table}
+        \begin{tabular}{l*{6}{r}}
+            \toprule
+            & \textbf{age} & \textbf{trestbps} & \textbf{chol} & \textbf{thalach} & \textbf{oldpeak} & \textbf{ca} \\
+            \midrule
+            count & 303 & 303 & 303 & 303 & 303 & 299 \\
+            mean & 54.4 & 131.69 & 246.69 & 149.61 & 1.04 & 0.67 \\
+            std & 9.04 & 17.60 & 51.78 & 22.88 & 1.16 & 0.94 \\
+            min & 29 & 94 & 126 & 71 & 0.00 & 0 \\
+            max & 77 & 200 & 564 & 202 & 6.20 & 3 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    
+    \begin{itemize}
+        \item \textbf{Distribución objetivo}: 164 sin enfermedad vs 139 con enfermedad
+        \item \textbf{Valores faltantes}: en variables \texttt{ca} y \texttt{thal}
+        \item \textbf{Consideraciones}: Datos históricos (1979-1988), sesgo de selección
+    \end{itemize}
+\end{frame}
+
+\section{Preprocesamiento}
+\begin{frame}{Preprocesamiento de Datos}
+    \begin{block}{Objetivos}
+        \begin{itemize}
+            \item Homogenizar escala de variables numéricas
+            \item Separar predictores $X$ y respuesta $y$
+            \item Manejar valores faltantes y outliers
+        \end{itemize}
+    \end{block}
+
+    \begin{columns}
+        \column{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{figures/ca_thal_nans.png}
+        
+        \column{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.8\textwidth]{figures/ca_thal_boxplots.png}
+    \end{columns}
+    
+    \begin{itemize}
+        \item \textbf{Valores faltantes}: Eliminación de filas (297 observaciones finales)
+        \item \textbf{Escalado}: StandardScaler (media=0, varianza=1)
+    \end{itemize}
+\end{frame}
+
+\section{Modelos de Clasificación}
+\begin{frame}{Random Forest}
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{itemize}
+            \item Combina múltiples árboles de decisión
+            \item Maneja variables categóricas/continuas
+            \item Captura relaciones no lineales
+            \item Proporciona importancia de variables
+        \end{itemize}
+        
+        \column{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/feature_importance.png}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Regresión Logística}
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{itemize}
+            \item Modelo lineal interpretable
+            \item Coeficientes como \textit{odds ratios}
+            \item Bajo riesgo de sobreajuste
+            \item Supone linealidad en el logit
+        \end{itemize}
+        
+        \column{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/logistic_coefficients.png}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Red Neuronal}
+    \begin{columns}
+        \column{0.6\textwidth}
+        \begin{itemize}
+            \item Aprende patrones no lineales complejos
+            \item Flexible con arquitecturas específicas
+            % \item Regularización con \textit{dropout}
+            \item Requiere más datos y ajuste cuidadoso
+        \end{itemize}
+        
+        \column{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/loss_function.png}
+    \end{columns}
+\end{frame}
+
+\section{Resultados y Comparación}
+\begin{frame}{Métricas de Desempeño}
+    \scriptsize
+    \begin{table}
+        \begin{tabular}{lccc}
+            \toprule
+            \textbf{Métrica} & \textbf{Random Forest} & \textbf{Logistic Regression} & \textbf{Neural Network} \\
+            \midrule
+            Recall & 0.750 & 0.786 & \textbf{0.857} \\
+            Accuracy & 0.817 & 0.833 & \textbf{0.850} \\
+            Balanced Accuracy & 0.812 & 0.830 & \textbf{0.850} \\
+            AUC-ROC & 0.941 & \textbf{0.950} & 0.910 \\
+            Precision & 0.840 & \textbf{0.846} & 0.828 \\
+            F1-score & 0.792 & 0.815 & \textbf{0.842} \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+    
+    \begin{itemize}
+        \item \textbf{Red Neuronal}: Mejor recall y accuracy (minimiza falsos negativos)
+        \item \textbf{Regresión Logística}: Mejor AUC-ROC (capacidad discriminativa global)
+        \item \textbf{Random Forest}: Posición intermedia en todas las métricas
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Matrices de Confusión}
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/confusion_matrix.png}
+    
+    \begin{itemize}
+        \item Red neuronal detecta mejor casos positivos (menos falsos negativos)
+        \item Patrones de error diferentes entre modelos
+    \end{itemize}
+\end{frame}
+
+\section{Conclusiones}
+\begin{frame}{Conclusiones}
+    \begin{block}{Hallazgos Principales}
+        \begin{itemize}
+            \item \textbf{Regresión Logística}: Mejor capacidad discriminativa global (AUC-ROC 0.950)
+            \item \textbf{Red Neuronal}: Mayor sensibilidad (recall 0.857) - ideal para minimizar falsos negativos
+            \item \textbf{Random Forest}: Desempeño sólido pero intermedio
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Recomendaciones Clínicas}
+        \begin{itemize}
+            \item Prioridad en detección: Red Neuronal
+            \item Equilibrio y interpretabilidad: Regresión Logística
+            \item Alternativa robusta: Random Forest
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Limitaciones y Trabajo Futuro}
+    \begin{block}{Limitaciones}
+        \begin{itemize}
+            \item Datos históricos (1979-1988)
+            \item Sesgo de selección (pacientes referidos)
+            \item Valores faltantes en variables clave
+            \item Desbalance de clases moderado
+        \end{itemize}
+    \end{block}
+    
+    \begin{block}{Trabajo Futuro}
+        \begin{itemize}
+            \item Incorporar factores de riesgo modernos
+            \item Validación en poblaciones contemporáneas
+            \item Análisis de características por subpoblaciones
+            \item Implementación en entorno clínico real
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Referencias}
+    \scriptsize
+    \begin{itemize}
+        \item \textbf{Dataset}: Detrano, R. et al. (1988). \textit{Heart Disease Dataset}. UCI Machine Learning Repository.
+        
+        \item \textbf{Organización Mundial de la Salud (2021)}. \textit{Cardiovascular Diseases (CVDs)}.
+        
+        \item \textbf{Cleveland Clinic Foundation}. (1988). Multicenter cardiac study data.
+        
+        \item Hungarian Institute of Cardiology, University Hospital Zurich, University Hospital Basel. Contribuidores de datos.
+    \end{itemize}
+    
+    \vspace{0.5cm}
+    \centering
+    \textbf{¡Gracias por su atención!}
+\end{frame}
+
+\end{document}
